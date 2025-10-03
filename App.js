@@ -31,6 +31,8 @@ export default function App() {
   const [photoTitle, setPhotoTitle] = useState('');
   const [photoDescription, setPhotoDescription] = useState('');
 
+
+  //carregar fotos e pedir permissão da câmera ao montar o componente
   useEffect(() => {
     fetchPhotos();
     requestCameraPermission();
@@ -78,7 +80,6 @@ export default function App() {
       });
 
       if (!response.ok) throw new Error("A resposta da rede não foi 'ok'");
-
       await response.json();
       resetPhotoState();
       await fetchPhotos();
