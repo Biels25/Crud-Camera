@@ -36,12 +36,16 @@ export default function App() {
     requestCameraPermission();
   }, []);
 
+
+  // Buscar fotos do servidor API 
   const fetchPhotos = async () => {
     try {
       setLoading(true);
+      // fetch para pegar as fotos e setar no estado
       const response = await fetch(API_URL);
       if (!response.ok) throw new Error("A resposta da rede não foi 'ok'");
       const data = await response.json();
+      // Exibir fotos mais recentes primeiro
       setPhotos(data.reverse());
     } catch (error) {
       console.error('Erro ao buscar fotos:', error);
@@ -50,17 +54,19 @@ export default function App() {
       setLoading(false);
     }
   };
-
+  // Adicionar nova foto
   const handleAddPhoto = async () => {
     if (!capturedPhoto || !photoTitle) {
       Alert.alert('Atenção', 'Você precisa de uma foto e um título para salvar.');
       return;
     }
 
+    // Criar objeto da nova foto
     const newPhoto = {
       titulo_foto: photoTitle,
       descricao_foto: photoDescription,
       data_foto: new Date().toISOString(),
+      //caminho da foto capturada
       uri: capturedPhoto.uri,
     };
 
@@ -82,6 +88,7 @@ export default function App() {
     }
   };
 
+  // Atualizar foto existente
   const handleUpdatePhoto = async () => {
     if (!currentPhoto || !photoTitle) {
       Alert.alert('Atenção', 'O título não pode ficar em branco.');
@@ -89,6 +96,7 @@ export default function App() {
     }
 
     const updatedPhoto = {
+      // Manter os dados existentes e atualizar título e descrição(... serve para copiar os dados do objeto)
       ...currentPhoto,
       titulo_foto: photoTitle,
       descricao_foto: photoDescription,
@@ -125,13 +133,15 @@ export default function App() {
     }
   };
 
+
+  // Abrir modal de edição com dados da foto selecionada
   const openEditModal = (photo) => {
     setCurrentPhoto(photo);
     setPhotoTitle(photo.titulo_foto);
     setPhotoDescription(photo.descricao_foto);
     setEditModalVisible(true);
   };
-
+  // Resetar estado dos modais e campos de foto
   const resetPhotoState = () => {
     setCameraModalVisible(false);
     setEditModalVisible(false);
@@ -145,9 +155,13 @@ export default function App() {
     setFacing((current) => (current === 'back' ? 'front' : 'back'));
   }
 
+  // Tirar foto com a câmera
   async function takePicture() {
+    // Verificar se a referência da câmera está disponível
     if (cameraRef.current) {
+      // Tirar a foto 
       const photo = await cameraRef.current.takePictureAsync();
+      // salvar a foto capturada no estado
       setCapturedPhoto(photo);
     }
   }
